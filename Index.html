@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fehlermeldung ELBK</title>
+<link rel="manifest" href="#" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ELBK Fehler">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0f1e;
+    --surface: rgba(255,255,255,0.05);
+    --surface-hover: rgba(255,255,255,0.09);
+    --border: rgba(255,255,255,0.08);
+    --accent: #4f8cff;
+    --accent2: #38d9a9;
+    --text: #f0f4ff;
+    --text-muted: rgba(240,244,255,0.4);
+    --red: rgba(255,90,90,0.18);
+    --red-border: rgba(255,90,90,0.3);
+    --yellow: rgba(255,210,60,0.18);
+    --yellow-border: rgba(255,210,60,0.3);
+    --blue: rgba(79,140,255,0.18);
+    --blue-border: rgba(79,140,255,0.3);
+    --purple: rgba(160,100,255,0.18);
+    --purple-border: rgba(160,100,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=60');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.07;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 30%, rgba(30,70,180,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 70%, rgba(20,100,80,0.2) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 52px 24px 24px;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .header-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 24px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    animation: fadeDown 0.5s ease 0.05s both;
+  }
+
+  .breadcrumb span { cursor: pointer; transition: color 0.2s; }
+  .breadcrumb span:hover { color: var(--accent); }
+  .breadcrumb .sep { opacity: 0.3; }
+  .breadcrumb .current { color: var(--text); font-weight: 600; }
+
+  /* ── CARDS ── */
+  .cards {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, transform 0.15s;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .card:hover, .card:active {
+    background: var(--surface-hover);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+  }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue   { background: var(--blue);   border: 1px solid var(--blue-border); }
+  .icon-teal   { background: rgba(56,217,169,0.15); border: 1px solid rgba(56,217,169,0.25); }
+  .icon-amber  { background: var(--yellow);  border: 1px solid var(--yellow-border); }
+  .icon-red    { background: var(--red);     border: 1px solid var(--red-border); }
+  .icon-purple { background: var(--purple);  border: 1px solid var(--purple-border); }
+  .icon-gray   { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); }
+
+  .card-body { flex: 1; }
+  .card-title { font-size: 16px; font-weight: 600; }
+  .card-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .card-arrow {
+    color: rgba(255,255,255,0.2);
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 18px 20px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+
+  /* ── BOTTOM SHEET (modal) ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .overlay.open {
+    display: flex;
+    animation: overlayIn 0.25s ease both;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(14,22,50,0.97);
+    border-top: 1px solid rgba(79,140,255,0.2);
+    border-radius: 26px 26px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+    animation: sheetUp 0.3s cubic-bezier(0.32,0.72,0,1) both;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+  }
+
+  .sheet-handle {
+    width: 38px; height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    margin: 14px auto 0;
+  }
+
+  .sheet-header {
+    padding: 12px 22px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .sheet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,140,255,0.12);
+    border: 1px solid rgba(79,140,255,0.22);
+    border-radius: 20px;
+    padding: 3px 10px 3px 7px;
+    margin-bottom: 8px;
+  }
+
+  .badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  .badge-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #7bb3ff;
+    letter-spacing: 0.5px;
+  }
+
+  .sheet-title { font-size: 20px; font-weight: 700; }
+  .sheet-sub   { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+  .sheet-list {
+    padding: 10px 14px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 14px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s;
+  }
+
+  .sheet-item:hover, .sheet-item:active {
+    background: rgba(79,140,255,0.12);
+    border-color: rgba(79,140,255,0.25);
+    transform: scale(0.99);
+  }
+
+  .sheet-item-icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+
+  .sheet-item-label { font-size: 15px; font-weight: 500; }
+  .sheet-item-arrow { margin-left: auto; color: rgba(255,255,255,0.2); font-size: 14px; }
+
+  .sheet-cancel {
+    margin: 6px 14px 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    width: calc(100% - 28px);
+    transition: background 0.15s;
+  }
+
+  .sheet-cancel:hover { background: rgba(255,255,255,0.09); }
+
+  /* ── SONSTIGES SHEET ── */
+  .sonstiges-sheet .sheet-list { padding: 14px; }
+
+  .text-area-wrap { position: relative; }
+
+  .sonstiges-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    padding: 14px;
+    resize: none;
+    height: 110px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .sonstiges-input:focus { border-color: var(--accent); }
+  .sonstiges-input::placeholder { color: var(--text-muted); }
+
+  .send-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: var(--accent);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.12s;
+  }
+
+  .send-btn:hover { background: #3a7aee; }
+  .send-btn:active { transform: scale(0.98); }
+  .send-btn:disabled { background: rgba(255,255,255,0.1); color: var(--text-muted); cursor: not-allowed; }
+
+  /* ── SUCCESS TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(30,200,130,0.95);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes overlayIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes sheetUp {
+    from { transform: translateY(100%); } to { transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.35; }
+  }
+
+  .page { display: none; flex-direction: column; flex: 1; }
+  .page.active { display: flex; animation: fadeUp 0.35s ease both; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══ SEITE 1: Gebäude-Auswahl ══ -->
+  <div class="page active" id="page-gebaeude">
+    <div class="header">
+      <div class="header-eyebrow">Facility Management</div>
+      <div class="header-title">Fehlermeldung<br>ELBK</div>
+      <div class="header-sub">Bitte wähle ein Gebäude</div>
+    </div>
+    <div class="section-label">Gebäude</div>
+    <div class="cards">
+      <div class="card" onclick="showRaeume('A')">
+        <div class="card-icon icon-blue">🏢</div>
+        <div class="card-body">
+          <div class="card-title">Gebäude A</div>
+          <div class="card-sub">13 Räume</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card" onclick="showRaeume('C')">
+        <div class="card-icon icon-teal">🏢</div>
+        <div class="card-body">
+          <div class="card-title">Gebäude C</div>
+          <div class="card-sub">12 Räume</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card" onclick="showRaeume('D')">
+        <div class="card-icon icon-amber">🏢</div>
+        <div class="card-body">
+          <div class="card-title">Gebäude D</div>
+          <div class="card-sub">30 Räume</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEITE 2: Raumliste ══ -->
+  <div class="page" id="page-raeume">
+    <div class="header">
+      <div class="header-eyebrow" id="raeume-eyebrow">Gebäude A</div>
+      <div class="header-title" id="raeume-title">Räume</div>
+      <div class="header-sub">Raum antippen um Fehler zu melden</div>
+    </div>
+    <div class="breadcrumb">
+      <span onclick="showPage('page-gebaeude')">🏠 Start</span>
+      <span class="sep">›</span>
+      <span class="current" id="breadcrumb-gebaeude">Gebäude A</span>
+    </div>
+    <div class="cards" id="raum-liste"></div>
+    <div style="height:30px"></div>
+  </div>
+
+</div>
+
+<!-- ══ OVERLAY: Fehlermeldung wählen ══ -->
+<div class="overlay" id="overlay-fehler" onclick="closeOverlay('overlay-fehler')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text" id="sheet-badge-text">RAUM</span>
+      </div>
+      <div class="sheet-title" id="sheet-title">Fehler melden</div>
+      <div class="sheet-sub">E-Mail wird automatisch erstellt</div>
+    </div>
+    <div class="sheet-list">
+      <div class="sheet-item" onclick="sendMail('Fernbedienung defekt', '')">
+        <div class="sheet-item-icon icon-red">📺</div>
+        <span class="sheet-item-label">Fernbedienung defekt</span>
+        <span class="sheet-item-arrow">›</span>
+      </div>
+      <div class="sheet-item" onclick="sendMail('Apple TV defekt', '')">
+        <div class="sheet-item-icon icon-gray">🍎</div>
+        <span class="sheet-item-label">Apple TV defekt</span>
+        <span class="sheet-item-arrow">›</span>
+      </div>
+      <div class="sheet-item" onclick="sendMail('WLAN defekt', '')">
+        <div class="sheet-item-icon icon-blue">📶</div>
+        <span class="sheet-item-label">WLAN defekt</span>
+        <span class="sheet-item-arrow">›</span>
+      </div>
+      <div class="sheet-item" onclick="openSonstiges()">
+        <div class="sheet-item-icon icon-purple">📝</div>
+        <span class="sheet-item-label">Sonstiges...</span>
+        <span class="sheet-item-arrow">›</span>
+      </div>
+    </div>
+    <button class="sheet-cancel" onclick="closeOverlay('overlay-fehler')">Abbrechen</button>
+  </div>
+</div>
+
+<!-- ══ OVERLAY: Sonstiges Texteingabe ══ -->
+<div class="overlay" id="overlay-sonstiges" onclick="closeOverlay('overlay-sonstiges')">
+  <div class="sheet sonstiges-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-badge">
+        <div class="badge-dot"></div>
+        <span class="badge-text" id="sonstiges-badge-text">RAUM</span>
+      </div>
+      <div class="sheet-title">Sonstiges</div>
+      <div class="sheet-sub">Bitte kurz beschreiben was nicht funktioniert</div>
+    </div>
+    <div class="sheet-list">
+      <textarea
+        class="sonstiges-input"
+        id="sonstiges-text"
+        placeholder="z.B. Beamer zeigt kein Bild, Steckdose defekt..."
+        oninput="checkSonstigesInput()"
+      ></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendSonstiges()" disabled>
+        ✉️ Meldung absenden
+      </button>
+    </div>
+    <button class="sheet-cancel" onclick="closeOverlay('overlay-sonstiges')">Abbrechen</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ E-Mail geöffnet!</div>
+
+<script>
+  const TEAM_EMAIL = 'christian.grusa@elbkhamm.de';
+
+  const GEBAEUDE = {
+    A: {
+      name: 'Gebäude A',
+      raeume: ['A003','A005','A009','A010 FHW','A011 FT','A011','A012','A105','A108','A112','A113','A114','A115']
+    },
+    C: {
+      name: 'Gebäude C',
+      raeume: ['C001','C003','C004','C006','C007','C009','C011 SLZ','C013 SLZ','C014','C016','C017','C019']
+    },
+    D: {
+      name: 'Gebäude D',
+      raeume: ['D107','D109 PC','D110 FKR','D113 FER','D114','D115','D116','D203 FF','D204','D206','D207','D210','D211','D213','D214','D216','D303','D305 PC','D306 FNW','D308 FP','D309 PC','D310','D311','D313','D314 FC','D316 FB','DU03 FK','DU06 FK','DU07 FM','DU08 FM']
+    }
+  };
+
+  let currentGebaeude = '';
+  let currentRaum = '';
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showRaeume(key) {
+    const g = GEBAEUDE[key];
+    currentGebaeude = g.name;
+
+    document.getElementById('raeume-eyebrow').textContent = g.name;
+    document.getElementById('raeume-title').textContent = 'Räume';
+    document.getElementById('breadcrumb-gebaeude').textContent = g.name;
+
+    const icons = ['icon-blue','icon-teal','icon-amber','icon-red','icon-purple','icon-gray'];
+    const emojis = ['🚪','🏠','🏢','📌','🔑','🪟'];
+
+    const liste = document.getElementById('raum-liste');
+    liste.innerHTML = g.raeume.map((r, i) => `
+      <div class="card" onclick="openFehlerSheet('${r.replace(/'/g,"\\'")}')">
+        <div class="card-icon ${icons[i % icons.length]}">${emojis[i % emojis.length]}</div>
+        <div class="card-body">
+          <div class="card-title">${r}</div>
+          <div class="card-sub">${g.name}</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+    `).join('');
+
+    showPage('page-raeume');
+  }
+
+  function openFehlerSheet(raum) {
+    currentRaum = raum;
+    document.getElementById('sheet-badge-text').textContent = `${currentGebaeude} · ${raum}`;
+    document.getElementById('sheet-title').textContent = 'Fehler melden';
+    document.getElementById('overlay-fehler').classList.add('open');
+  }
+
+  function closeOverlay(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function openSonstiges() {
+    closeOverlay('overlay-fehler');
+    document.getElementById('sonstiges-text').value = '';
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('sonstiges-badge-text').textContent = `${currentGebaeude} · ${currentRaum}`;
+    setTimeout(() => {
+      document.getElementById('overlay-sonstiges').classList.add('open');
+    }, 200);
+  }
+
+  function checkSonstigesInput() {
+    const val = document.getElementById('sonstiges-text').value.trim();
+    document.getElementById('send-btn').disabled = val.length === 0;
+  }
+
+  function sendSonstiges() {
+    const text = document.getElementById('sonstiges-text').value.trim();
+    sendMail('Sonstiges', text);
+    closeOverlay('overlay-sonstiges');
+  }
+
+  function sendMail(fehler, beschreibung) {
+    closeOverlay('overlay-fehler');
+
+    const subject = `Fehlermeldung: ${currentGebaeude} – ${currentRaum}`;
+    let body = `Guten Tag,\n\nin ${currentGebaeude}, ${currentRaum} wurde folgendes Problem gemeldet:\n\n→ ${fehler}`;
+    if (beschreibung) body += `\n\nBeschreibung: ${beschreibung}`;
+    body += `\n\nBitte um Bearbeitung.\n\nFreundliche Grüsse`;
+
+    const mailto = `mailto:${TEAM_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+
+    showToast();
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
